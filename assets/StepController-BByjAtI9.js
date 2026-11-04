@@ -1,1 +1,591 @@
-import{E as A,V as y,g as v,l as S,b as P}from"app-CRX_gFP4.js";import"main-DWAIzYvo.js";const E={resistance:.3,maxStretch:.12,commitWheel:160,commitTouch:70,commitVelocity:.45,releaseIdle:140,springBack:.7,springEase:"power2.out",travelBlock:1.6,easeBlock:"sine.inOut",travelCross:2.6,easeCross:"power2.inOut",travelToS:2.4,easeToS:"sine.inOut",travelToFooter:2.6,easeToFooter:"sine.inOut",poolBreath:.6,poolSigma:.13,poolLag:.21,poolDelay:0,travelChapter:.9,easeChapter:"sine.inOut",travelJumpMax:4,cooldown:220,tapSlop:10,safetyIdle:300,travelSmoothing:.22,reducedTravel:.6,reducedCommit:.4},C=new Set(["ArrowDown","ArrowUp","PageDown","PageUp"," ","Home","End"]),D=typeof location<"u"&&/[?&]to=samana(?:&|$)/.test(location.search),N="button, a[href], input, textarea, select, [role=button], [role=radio]";class R{constructor(){var t;this.experience=A.getInstance(),this.time=this.experience.time,this.sizes=this.experience.sizes,this.scroll=this.experience.scroll,this.lenis=this.scroll.lenis,this.debug=this.experience.debug,this.caps=this.experience.capabilities,this.cfg=E,this.reducedMotion=!!((t=this.caps)!=null&&t.reducedMotion),this.stops=null,this.stopPx=[],this.index=0,this.state="idle",this.restSince=0,this._acc=0,this._accAtRelease=0,this._lastWheel=-1e9,this._springTw=null,this._tensionProxy={v:0},this._travel=null,this._touch=null,this._consumed=!1,this._needsMeasure=!1,this._resizeAt=0,this._lastY=0,this._stillSince=0,this._lastDir=1;try{"scrollRestoration"in history&&(history.scrollRestoration="manual")}catch{}this.scroll.interceptor=e=>this.onVirtualScroll(e),this.setListeners(),this.setDebug()}buildStops(){var r,l,u,f,g;const t=this.experience.camera,e=(r=t==null?void 0:t.getStopTimes)==null?void 0:r.call(t),s=(l=this.experience.world)==null?void 0:l.showcase;if(!e||!e.length||!((u=s==null?void 0:s.blocks)!=null&&u.length))return!1;const i=t.planesPerBlock||3,n=Math.min(Math.floor(e.length/i),s.blocks.length),o=[];for(let p=0;p<n;p++)for(let c=0;c<i;c++)o.push({t:e[p*i+c],kind:"block",block:p,plane:c});const h=((f=t.getSFramedT)==null?void 0:f.call(t))??1;return h<1&&(((g=t.getChapterTimes)==null?void 0:g.call(t))||[h]).forEach((c,x)=>o.push({t:c,kind:x===0?"s":"chapter",block:-1,plane:-1,chapter:x})),o.push({t:1,kind:"footer",block:-1,plane:-1}),this.stops=o,this.N=i,this.measure(),!0}measure(){if(!this.stops)return;const t=this.lenis.limit;this.limit=t,this.stopPx=this.stops.map(e=>Math.min(t,Math.ceil(e.t*t)))}leg(t,e){const s=this.cfg,i=this.stops[Math.min(t,e)],n=this.stops[Math.max(t,e)];return n.kind==="footer"?{duration:s.travelToFooter,ease:this.poolEase(e>t?1:-1)||s.easeToFooter,kind:"footer"}:n.kind==="chapter"?{duration:s.travelChapter,ease:s.easeChapter,kind:"chapter"}:n.kind==="s"?{duration:s.travelToS,ease:s.easeToS,kind:"s"}:i.block!==n.block?{duration:s.travelCross,ease:s.easeCross,kind:"cross"}:{duration:s.travelBlock,ease:s.easeBlock,kind:"block"}}poolEase(t){var h,r,l;const e=this.experience.camera,s=(h=this.experience.world)==null?void 0:h.waterline,i=((r=e==null?void 0:e.getFooterStartT)==null?void 0:r.call(e))??1;if(!s||i>=1||!e.samplePose)return null;const n=`${i}:${s.surfaceY}:${this.cfg.poolBreath}:${this.cfg.poolSigma}:${this.cfg.poolLag}:${this.cfg.travelToFooter}:${this.cfg.poolDelay}`;((l=this._pool)==null?void 0:l.key)!==n&&(this._pool=this._buildPool(e,s,i,n));const o=this._pool;return o?t>0?o.down:o.up:null}_buildPool(t,e,s,i){const o=new Float32Array(257),h=[new y,new y];let r=-1,l=0;const u=new Float32Array(257);for(let a=0;a<=256;a++){const d=a/256;t.samplePose(s+d*(1-s),h[0],h[1]),u[a]=h[0].y;const m=h[0].y-e.planeYAt(h[0].z);a>0&&r<0&&l>0&&m<=0&&(r=(a-1+l/(l-m))/256),l=m}const f=u[0],g=u[256];if(r<0||Math.abs(g-f)<.001)return null;for(let a=0;a<=256;a++)o[a]=a===0?0:Math.max(o[a-1]+1e-7,(f-u[a])/(f-g));for(let a=0;a<=256;a++)o[a]/=o[256];const p=S(o,r),c=this.cfg,x=c.poolLag/c.travelToFooter,T=P(p,c.poolBreath,c.poolSigma,x,c.poolDelay),b=P(1-p,c.poolBreath,c.poolSigma,x,0),k=a=>{if(a<=0)return 0;if(a>=1)return 1;let d=0,m=256;for(;m-d>1;){const M=d+m>>1;o[M]<=a?d=M:m=M}return(d+(a-o[d])/Math.max(1e-9,o[m]-o[d]))/256};return{key:i,cf:p,qc:r,lutDown:T,lutUp:b,down:a=>a<=0?0:a>=1?1:k(S(T,a)),up:a=>a<=0?0:a>=1?1:1-k(1-S(b,a))}}stretchSpec(t){var l,u;const e=this.index+t;if(!this.stops||e<0||e>=this.stops.length)return null;const s=Math.abs(this.stopPx[e]-this.stopPx[this.index]);if(s<1)return null;const i=this.leg(this.index,e).kind,n=i!=="chapter";let o=1;i==="cross"&&(o=.9*(((u=(l=this.experience.postprocessing)==null?void 0:l.params)==null?void 0:u.deadZone)??.18)*.5);const h=Math.min(this.cfg.maxStretch,n?w(o):o),r=h*s/Math.max(.001,this.cfg.resistance);return{legPx:s,eased:n,Me:h,k:r}}rubber(t){if(!t||this.reducedMotion)return 0;const e=Math.sign(t),s=this.stretchSpec(e);if(!s||s.Me<=0)return 0;const i=s.Me*(1-Math.exp(-Math.abs(t)/s.k)),n=s.eased?F(i):i;return e*n*s.legPx}accFromTension(t){if(!t)return 0;const e=Math.sign(t),s=this.stretchSpec(e);if(!s||s.Me<=0)return 0;const i=Math.min(1,Math.abs(t)/s.legPx),n=s.eased?w(i):i,o=Math.min(.999,n/s.Me);return e*-s.k*Math.log(1-o)}setTensionPx(t){this._tensionPx=t,this.scroll.tension=this.limit>0?t/this.limit:0}get locked(){var e,s,i;const t=this.experience;return!!(this.scroll.locked||(e=t.camera)!=null&&e.introActive||(s=t.pageTransition)!=null&&s.playing||(i=t.curtain)!=null&&i.playing||t.loader&&!t.loader.done)}get contactOpen(){var t;return!!((t=this.experience.contactForm)!=null&&t.open)}get hudOpen(){var t;return!!((t=this.experience.pointsHUD)!=null&&t.open)}get commitScale(){return this.reducedMotion?this.cfg.reducedCommit:1}setListeners(){this.time.on("tick.step",()=>this.update()),this.sizes.on("resize.step",()=>{this._needsMeasure=!0,this._resizeAt=this.time.elapsed}),this._onKey=t=>this.onKey(t),window.addEventListener("keydown",this._onKey),this._onTouchCancel=()=>this.abortTouch(),window.addEventListener("touchcancel",this._onTouchCancel,{passive:!0})}onVirtualScroll(t){const e=t.event;return this.contactOpen?!0:e?e.type==="wheel"?(e.ctrlKey||Math.abs(t.deltaX)>Math.abs(t.deltaY)||this.inNativeScroller(e)||(e.cancelable&&e.preventDefault(),!this.locked&&this.stops&&this.onWheel(t.deltaY)),!1):e.type==="touchstart"?this.onTouchStart(e):e.type==="touchmove"?this.onTouchMove(e):e.type==="touchend"?this.onTouchEnd(e):!1:!1}inNativeScroller(t){const e=t.composedPath?t.composedPath():[];for(const s of e)if(s instanceof HTMLElement){if(s===document.documentElement||s===document.body)break;if(s.hasAttribute("data-lenis-prevent")&&s.scrollHeight>s.clientHeight+1)return!0}return!1}onWheel(t){const e=this.time.elapsed,s=e-this._lastWheel;if(this._lastWheel=e,!!t){if(this.hudOpen){s>this.cfg.releaseIdle&&this.experience.pointsHUD.closePanel(),this._consumed=!0;return}if(this._consumed){if(s<=this.cfg.releaseIdle)return;this._consumed=!1}if(!this.scroll.paused&&this.state!=="travel"){if(this.state==="cooldown"){if(s<this.cfg.cooldown)return;this.toRest()}this.state==="rest"?(this._acc=0,this.state="tension"):this.state==="spring"&&(this.killSpring(),this._acc=Math.sign(t)===Math.sign(this._accAtRelease)?this._accAtRelease:this.accFromTension(this._tensionPx||0),this.state="tension"),this.state==="tension"&&(this._acc+=t,Math.abs(this._acc)>=this.cfg.commitWheel*this.commitScale?this.commit(Math.sign(this._acc)):this.setTensionPx(this.rubber(this._acc)))}}}onTouchStart(t){var o;if(t.touches&&t.touches.length>1)return this.abortTouch(),!1;const e=(o=t.touches)==null?void 0:o[0];if(!e)return!1;const s=this.inNativeScroller(t),i=this.experience.pointsHUD,n=this.hudOpen||performance.now()-((i==null?void 0:i.closedAtPerf)??-1e9)<120;return this._touch={x0:e.clientX,y0:e.clientY,axis:null,native:s,closer:n,active:!1,accBase:0,samples:[]},!this.locked&&this.state==="spring"&&(this.killSpring(),this._touch.accBase=this.accFromTension(this._tensionPx||0),this.state="tension",this._acc=this._touch.accBase),!1}onTouchMove(t){var o,h,r,l;const e=this._touch;if(!e)return!1;if(t.touches&&t.touches.length>1)return this.abortTouch(),!1;if(e.native)return!1;t.cancelable&&t.preventDefault();const s=(o=t.touches)==null?void 0:o[0];if(!s)return!1;const i=s.clientX-e.x0,n=s.clientY-e.y0;if(e.closer)return this.hudOpen&&Math.hypot(i,n)>=this.cfg.tapSlop&&this.experience.pointsHUD.closePanel(),!1;if(this.locked||!this.stops||this.scroll.paused)return!1;if(e.axis===null){const u=((r=(h=this.experience.camera)==null?void 0:h.dragCfg)==null?void 0:r.axisThresh)??6;if(Math.abs(i)<u&&Math.abs(n)<u)return!1;const f=(l=this.experience.camera)==null?void 0:l.drag;f!=null&&f.active&&f.axis?e.axis=f.axis==="x"?"x":"y":e.axis=Math.abs(i)>Math.abs(n)?"x":"y"}if(e.axis!=="y"||this.state==="travel")return!1;if(!e.active){if(Math.abs(n)<this.cfg.tapSlop)return!1;e.active=!0,(this.state==="rest"||this.state==="cooldown")&&(this.state="tension",e.accBase=0)}return this.state!=="tension"||(this._acc=e.accBase-n,e.samples.push({t:t.timeStamp||performance.now(),acc:this._acc}),e.samples.length>8&&e.samples.shift(),this.setTensionPx(this.rubber(this._acc))),!1}onTouchEnd(t){const e=this._touch;if(!e||t.touches&&t.touches.length>0||(this._touch=null,!e.active||this.state!=="tension"))return!1;let s=0;const i=e.samples,n=t.timeStamp||performance.now();if(i.length>=2&&n-i[i.length-1].t<120){let r=i.length-1;for(;r>0&&i[i.length-1].t-i[r-1].t<=100;)r--;const l=i[i.length-1].t-i[r].t;l>0&&(s=(i[i.length-1].acc-i[r].acc)/l)}const o=this._acc-e.accBase,h=this.commitScale;return this.lastRelease={dist:Math.round(o),v:+s.toFixed(3),n:i.length},Math.abs(o)>=this.cfg.commitTouch*h?this.commit(Math.sign(o)):Math.abs(s)>=this.cfg.commitVelocity*h?this.commit(Math.sign(s)):this.release(),!1}abortTouch(){const t=this._touch;this._touch=null,t!=null&&t.active&&this.state==="tension"&&this.release()}onKey(t){var n,o;if(!C.has(t.key)||t.metaKey||t.ctrlKey||t.altKey||this.contactOpen)return;const e=document.activeElement;if(e&&e!==document.body&&(e.matches(N)||e.isContentEditable||e.closest("[role=dialog]"))||(t.preventDefault(),this.locked||!this.stops))return;if(this.hudOpen){this.experience.pointsHUD.closePanel();return}if(this.scroll.paused||this.state==="travel")return;const s=this.stops.length-1;if(t.key==="Home"||t.key==="End"){(t.key==="Home"?this.index!==0:this.index!==s)&&(t.key==="Home"?(n=this.experience.router)==null||n.go("home",{top:!0}):(o=this.experience.pageTransition)==null||o.toFooter(!1));return}let i;t.key==="ArrowUp"||t.key==="PageUp"||t.key===" "&&t.shiftKey?i=this.index-1:i=this.index+1,i=Math.max(0,Math.min(s,i)),(this.state==="spring"||this.state==="tension")&&this.flattenTension(),i!==this.index&&this.travelTo(i)}release(){if(this.state!=="tension")return;this._accAtRelease=this._acc,this._acc=0;const t=this._tensionPx||0;if(!t){this.toRest();return}this.state="spring",this._tensionProxy.v=t,this._springTw=v.to(this._tensionProxy,{v:0,duration:this.cfg.springBack,ease:this.cfg.springEase,onUpdate:()=>this.setTensionPx(this._tensionProxy.v),onComplete:()=>{this._springTw=null,this.setTensionPx(0),this.state==="spring"&&this.toRest()}})}killSpring(){var t;(t=this._springTw)==null||t.kill(),this._springTw=null}commit(t){const e=Math.max(0,Math.min(this.stops.length-1,this.index+t));if(e===this.index){this.release();return}this.flattenTension(),this.travelTo(e)}flattenTension(){this.killSpring();const t=this._tensionPx||0;t&&this.lenis.scrollTo(this.stopPx[this.index]+t,{immediate:!0,force:!0}),this.setTensionPx(0),this._acc=0}travelTo(t,e={}){if(!this.stops)return;const s=this.index;let i,n;if(Math.abs(t-s)===1)({duration:i,ease:n}=this.leg(s,t));else{let h=0;const r=Math.sign(t-s);for(let l=s;l!==t;l+=r)h+=this.leg(l,l+r).duration;i=Math.min(this.cfg.travelJumpMax,h),n=this.cfg.easeCross}e.scale!=null&&(i*=e.scale),this.reducedMotion&&(i=this.cfg.reducedTravel,n=this.cfg.easeBlock),this.index=t,this.state="travel",this.setTravelSmoothing(!0);const o=Math.abs(t-s)===1?this.leg(s,t).kind:"jump";this._travel={to:t,duration:i,ease:n,fromPx:this.lenis.animatedScroll,from:s,kind:o,t0:this.time.elapsed},this.lenis.scrollTo(this.stopPx[t],{duration:i,easing:v.parseEase(n),lock:!0,force:!0,onComplete:()=>this.onArrive(t)})}onArrive(t){if(this.state!=="travel"||this.index!==t)return;this._travel=null,this._needsMeasure&&this.applyMeasure();const e=this.lenis.animatedScroll;Math.abs(e-this.stopPx[t])>.5&&this.lenis.scrollTo(this.stopPx[t],{immediate:!0,force:!0}),this.state="cooldown",this._stillSince=this.time.elapsed}landAt(t){this._idleTo=t}toRest(){this.state="rest",this.restSince=this.time.elapsed,this._acc=0}setTravelSmoothing(t){this._baseSmoothing==null&&(this._baseSmoothing=this.scroll.smoothing),this._travelSmooth=t,this.scroll.smoothing=t?this.cfg.travelSmoothing:this._baseSmoothing}applyMeasure(){this._needsMeasure=!1,this.lenis.resize(),this.measure()}nearestStop(t,e=0){const s=this.stopPx;if(e>0){for(let o=0;o<s.length;o++)if(s[o]>=t-.5)return o;return s.length-1}if(e<0){for(let o=s.length-1;o>=0;o--)if(s[o]<=t+.5)return o;return 0}let i=0,n=1/0;for(let o=0;o<s.length;o++){const h=Math.abs(s[o]-t);h<n&&(n=h,i=o)}return i}update(){var s,i;const t=this.time.elapsed;if(this.locked){this.scroll.locked&&Math.abs(this.lenis.animatedScroll)>.5&&this.lenis.scrollTo(0,{immediate:!0,force:!0}),this.state!=="idle"&&(this.killSpring(),this._travelSmooth&&this.setTravelSmoothing(!1),this.setTensionPx(0),this._acc=0,this._touch=null,this._travel=null,this.state="idle");return}if(!this.stops&&!this.buildStops())return;if(this.state==="idle"){this.applyMeasure(),this.index=this._idleTo??0,this._idleTo=null,this.lenis.scrollTo(this.stopPx[this.index],{immediate:!0,force:!0}),this._lastY=this.lenis.animatedScroll,this._stillSince=t,this.toRest(),D&&!this._toSamana&&!((s=this.experience.router)!=null&&s.onPage)&&(this._toSamana={at:t+800,to:this.stops.findIndex(n=>n.kind==="s")});return}if((i=this._toSamana)!=null&&i.at&&t>=this._toSamana.at){const n=this._toSamana.to;this._toSamana.at=0,this.state==="rest"&&n>this.index&&!this.scroll.paused&&this.travelTo(n)}if(this.contactOpen||this.scroll.paused){this._stillSince=t,this.scroll.paused&&this.state==="tension"&&(this.setTensionPx(0),this._acc=0,this.toRest());return}if(this._needsMeasure&&t-this._resizeAt>150&&this.state!=="travel"&&(this.applyMeasure(),this.state!=="tension"&&this.state!=="spring"&&this.lenis.scrollTo(this.stopPx[this.index],{immediate:!0,force:!0}),this._lastY=this.lenis.animatedScroll),this.state==="travel"&&this.lenis.isScrolling!=="smooth"&&this._travel){const n=this.lenis.animatedScroll,o=this.stopPx[this.index];if(Math.abs(n-o)>1){const h=this._travel,r=Math.min(1,Math.abs(o-n)/Math.max(1,Math.abs(o-h.fromPx)));h.fromPx=n,typeof h.ease=="function"&&(h.ease=this.cfg.easeToFooter),this.lenis.scrollTo(o,{duration:Math.max(this.reducedMotion?.3:.6,h.duration*r),easing:v.parseEase(h.ease),lock:!0,force:!0,onComplete:()=>this.onArrive(this.index)})}else this.onArrive(this.index)}this.state==="cooldown"&&t-this._lastWheel>=this.cfg.cooldown&&this.toRest(),this._travelSmooth&&this.state!=="travel"&&this.state!=="cooldown"&&(this.state!=="rest"||this.scroll.progress===this.scroll.target)&&this.setTravelSmoothing(!1),this.state==="tension"&&!this._touch&&t-this._lastWheel>=this.cfg.releaseIdle&&this.release();const e=this.lenis.animatedScroll;if(Math.abs(e-this._lastY)>.5&&(this._lastDir=Math.sign(e-this._lastY)||this._lastDir,this._lastY=e,this._stillSince=t),(this.state==="rest"||this.state==="cooldown")&&!this._touch&&t-this._stillSince>this.cfg.safetyIdle&&Math.abs(e-this.stopPx[this.index])>1){const n=this.nearestStop(e,this._lastDir);if(Math.abs(this.stopPx[n]-e)<=1)this.index=n,this.toRest();else{const o=this.stops.length-1,h=Math.max(0,Math.min(o,this.stopPx[n]>e?n-1:n+1)),r=Math.max(1,Math.abs(this.stopPx[n]-this.stopPx[h])),l=Math.min(1,Math.abs(this.stopPx[n]-e)/r);this.index=h,this.travelTo(n,{scale:Math.max(.5,l)})}}}setDebug(){}destroy(){this.time.off("tick.step"),this.sizes.off("resize.step"),window.removeEventListener("keydown",this._onKey),window.removeEventListener("touchcancel",this._onTouchCancel),this.killSpring(),this.scroll.interceptor&&(this.scroll.interceptor=null),this.scroll.tension=0}}function w(_){const t=Math.max(0,Math.min(1,_));return t*t*(3-2*t)}function F(_){const t=Math.max(0,Math.min(1,_));return .5-Math.sin(Math.asin(1-2*t)/3)}export{E as STEP_CONFIG,R as default};
+import { E as A, V as y, g as v, l as S, b as P } from "app-CRX_gFP4.js";
+import "main-DWAIzYvo.js";
+
+const E = {
+    resistance: .3,
+    maxStretch: .12,
+    commitWheel: 160,
+    commitTouch: 70,
+    commitVelocity: .45,
+    releaseIdle: 140,
+    springBack: .7,
+    springEase: "power2.out",
+    travelBlock: 1.6,
+    easeBlock: "sine.inOut",
+    travelCross: 2.6,
+    easeCross: "power2.inOut",
+    travelToS: 2.4,
+    easeToS: "sine.inOut",
+    travelToFooter: 2.6,
+    easeToFooter: "sine.inOut",
+    poolBreath: .6,
+    poolSigma: .13,
+    poolLag: .21,
+    poolDelay: 0,
+    travelChapter: .9,
+    easeChapter: "sine.inOut",
+    travelJumpMax: 4,
+    cooldown: 220,
+    tapSlop: 10,
+    safetyIdle: 300,
+    travelSmoothing: .22,
+    reducedTravel: .6,
+    reducedCommit: .4
+};
+
+const C = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"]);
+const D = typeof location < "u" && /[?&]to=samana(?:&|$)/.test(location.search);
+const N = "button, a[href], input, textarea, select, [role=button], [role=radio]";
+
+class R {
+    constructor() {
+        var t;
+        this.experience = A.getInstance();
+        this.time = this.experience.time;
+        this.sizes = this.experience.sizes;
+        this.scroll = this.experience.scroll;
+        this.lenis = this.scroll.lenis;
+        this.debug = this.experience.debug;
+        this.caps = this.experience.capabilities;
+        this.cfg = E;
+        this.reducedMotion = !!((t = this.caps) != null && t.reducedMotion);
+        this.stops = null;
+        this.stopPx = [];
+        this.index = 0;
+        this.state = "idle";
+        this.restSince = 0;
+        this._acc = 0;
+        this._accAtRelease = 0;
+        this._lastWheel = -1e9;
+        this._springTw = null;
+        this._tensionProxy = { v: 0 };
+        this._travel = null;
+        this._touch = null;
+        this._consumed = !1;
+        this._needsMeasure = !1;
+        this._resizeAt = 0;
+        this._lastY = 0;
+        this._stillSince = 0;
+        this._lastDir = 1;
+        try {
+            "scrollRestoration" in history && (history.scrollRestoration = "manual")
+        } catch {}
+        this.scroll.interceptor = e => this.onVirtualScroll(e);
+        this.setListeners();
+        this.setDebug()
+    }
+
+    buildStops() {
+        var r, l, u, f, g;
+        const t = this.experience.camera;
+        const e = (r = t == null ? void 0 : t.getStopTimes) == null ? void 0 : r.call(t);
+        const s = (l = this.experience.world) == null ? void 0 : l.showcase;
+        if (!e || !e.length || !((u = s == null ? void 0 : s.blocks) != null && u.length)) return !1;
+        const i = t.planesPerBlock || 3;
+        const n = Math.min(Math.floor(e.length / i), s.blocks.length);
+        const o = [];
+        for (let p = 0; p < n; p++)
+            for (let c = 0; c < i; c++)
+                o.push({ t: e[p * i + c], kind: "block", block: p, plane: c });
+        const h = ((f = t.getSFramedT) == null ? void 0 : f.call(t)) ?? 1;
+        return h < 1 && (((g = t.getChapterTimes) == null ? void 0 : g.call(t)) || [h]).forEach((c, x) => o.push({ t: c, kind: x === 0 ? "s" : "chapter", block: -1, plane: -1, chapter: x })), o.push({ t: 1, kind: "footer", block: -1, plane: -1 }), this.stops = o, this.N = i, this.measure(), !0
+    }
+
+    measure() {
+        if (!this.stops) return;
+        const t = this.lenis.limit;
+        this.limit = t;
+        this.stopPx = this.stops.map(e => Math.min(t, Math.ceil(e.t * t)))
+    }
+
+    leg(t, e) {
+        const s = this.cfg;
+        const i = this.stops[Math.min(t, e)];
+        const n = this.stops[Math.max(t, e)];
+        return n.kind === "footer"
+            ? { duration: s.travelToFooter, ease: this.poolEase(e > t ? 1 : -1) || s.easeToFooter, kind: "footer" }
+            : n.kind === "chapter"
+                ? { duration: s.travelChapter, ease: s.easeChapter, kind: "chapter" }
+                : n.kind === "s"
+                    ? { duration: s.travelToS, ease: s.easeToS, kind: "s" }
+                    : i.block !== n.block
+                        ? { duration: s.travelCross, ease: s.easeCross, kind: "cross" }
+                        : { duration: s.travelBlock, ease: s.easeBlock, kind: "block" }
+    }
+
+    poolEase(t) {
+        var h, r, l;
+        const e = this.experience.camera;
+        const s = (h = this.experience.world) == null ? void 0 : h.waterline;
+        const i = ((r = e == null ? void 0 : e.getFooterStartT) == null ? void 0 : r.call(e)) ?? 1;
+        if (!s || i >= 1 || !e.samplePose) return null;
+        const n = `${i}:${s.surfaceY}:${this.cfg.poolBreath}:${this.cfg.poolSigma}:${this.cfg.poolLag}:${this.cfg.travelToFooter}:${this.cfg.poolDelay}`;
+        ((l = this._pool) == null ? void 0 : l.key) !== n && (this._pool = this._buildPool(e, s, i, n));
+        const o = this._pool;
+        return o ? t > 0 ? o.down : o.up : null
+    }
+
+    _buildPool(t, e, s, i) {
+        const o = new Float32Array(257);
+        const h = [new y, new y];
+        let r = -1, l = 0;
+        const u = new Float32Array(257);
+        for (let a = 0; a <= 256; a++) {
+            const d = a / 256;
+            t.samplePose(s + d * (1 - s), h[0], h[1]), u[a] = h[0].y;
+            const m = h[0].y - e.planeYAt(h[0].z);
+            a > 0 && r < 0 && l > 0 && m <= 0 && (r = (a - 1 + l / (l - m)) / 256), l = m
+        }
+        const f = u[0], g = u[256];
+        if (r < 0 || Math.abs(g - f) < .001) return null;
+        for (let a = 0; a <= 256; a++) o[a] = a === 0 ? 0 : Math.max(o[a - 1] + 1e-7, (f - u[a]) / (f - g));
+        for (let a = 0; a <= 256; a++) o[a] /= o[256];
+        const p = S(o, r);
+        const c = this.cfg;
+        const x = c.poolLag / c.travelToFooter;
+        const T = P(p, c.poolBreath, c.poolSigma, x, c.poolDelay);
+        const b = P(1 - p, c.poolBreath, c.poolSigma, x, 0);
+        const k = a => {
+            if (a <= 0) return 0;
+            if (a >= 1) return 1;
+            let d = 0, m = 256;
+            for (; m - d > 1;) {
+                const M = d + m >> 1;
+                o[M] <= a ? d = M : m = M
+            }
+            return (d + (a - o[d]) / Math.max(1e-9, o[m] - o[d])) / 256
+        };
+        return {
+            key: i,
+            cf: p,
+            qc: r,
+            lutDown: T,
+            lutUp: b,
+            down: a => a <= 0 ? 0 : a >= 1 ? 1 : k(S(T, a)),
+            up: a => a <= 0 ? 0 : a >= 1 ? 1 : 1 - k(1 - S(b, a))
+        }
+    }
+
+    stretchSpec(t) {
+        var l, u;
+        const e = this.index + t;
+        if (!this.stops || e < 0 || e >= this.stops.length) return null;
+        const s = Math.abs(this.stopPx[e] - this.stopPx[this.index]);
+        if (s < 1) return null;
+        const i = this.leg(this.index, e).kind;
+        const n = i !== "chapter";
+        let o = 1;
+        i === "cross" && (o = .9 * (((u = (l = this.experience.postprocessing) == null ? void 0 : l.params) == null ? void 0 : u.deadZone) ?? .18) * .5);
+        const h = Math.min(this.cfg.maxStretch, n ? w(o) : o);
+        const r = h * s / Math.max(.001, this.cfg.resistance);
+        return { legPx: s, eased: n, Me: h, k: r }
+    }
+
+    rubber(t) {
+        if (!t || this.reducedMotion) return 0;
+        const e = Math.sign(t);
+        const s = this.stretchSpec(e);
+        if (!s || s.Me <= 0) return 0;
+        const i = s.Me * (1 - Math.exp(-Math.abs(t) / s.k));
+        const n = s.eased ? F(i) : i;
+        return e * n * s.legPx
+    }
+
+    accFromTension(t) {
+        if (!t) return 0;
+        const e = Math.sign(t);
+        const s = this.stretchSpec(e);
+        if (!s || s.Me <= 0) return 0;
+        const i = Math.min(1, Math.abs(t) / s.legPx);
+        const n = s.eased ? w(i) : i;
+        const o = Math.min(.999, n / s.Me);
+        return e * -s.k * Math.log(1 - o)
+    }
+
+    setTensionPx(t) {
+        this._tensionPx = t;
+        this.scroll.tension = this.limit > 0 ? t / this.limit : 0
+    }
+
+    get locked() {
+        var e, s, i;
+        const t = this.experience;
+        return !!(this.scroll.locked || (e = t.camera) != null && e.introActive || (s = t.pageTransition) != null && s.playing || (i = t.curtain) != null && i.playing || t.loader && !t.loader.done)
+    }
+
+    get contactOpen() {
+        var t;
+        return !!((t = this.experience.contactForm) != null && t.open)
+    }
+
+    get hudOpen() {
+        var t;
+        return !!((t = this.experience.pointsHUD) != null && t.open)
+    }
+
+    get commitScale() {
+        return this.reducedMotion ? this.cfg.reducedCommit : 1
+    }
+
+    setListeners() {
+        this.time.on("tick.step", () => this.update());
+        this.sizes.on("resize.step", () => {
+            this._needsMeasure = !0;
+            this._resizeAt = this.time.elapsed
+        });
+        this._onKey = t => this.onKey(t);
+        window.addEventListener("keydown", this._onKey);
+        this._onTouchCancel = () => this.abortTouch();
+        window.addEventListener("touchcancel", this._onTouchCancel, { passive: !0 })
+    }
+
+    onVirtualScroll(t) {
+        const e = t.event;
+        return this.contactOpen
+            ? !0
+            : e
+                ? e.type === "wheel"
+                    ? (e.ctrlKey || Math.abs(t.deltaX) > Math.abs(t.deltaY) || this.inNativeScroller(e) || (e.cancelable && e.preventDefault(), !this.locked && this.stops && this.onWheel(t.deltaY)), !1)
+                    : e.type === "touchstart"
+                        ? this.onTouchStart(e)
+                        : e.type === "touchmove"
+                            ? this.onTouchMove(e)
+                            : e.type === "touchend"
+                                ? this.onTouchEnd(e)
+                                : !1
+                : !1
+    }
+
+    inNativeScroller(t) {
+        const e = t.composedPath ? t.composedPath() : [];
+        for (const s of e)
+            if (s instanceof HTMLElement) {
+                if (s === document.documentElement || s === document.body) break;
+                if (s.hasAttribute("data-lenis-prevent") && s.scrollHeight > s.clientHeight + 1) return !0
+            }
+        return !1
+    }
+
+    onWheel(t) {
+        const e = this.time.elapsed;
+        const s = e - this._lastWheel;
+        if (this._lastWheel = e, !!t) {
+            if (this.hudOpen) {
+                s > this.cfg.releaseIdle && this.experience.pointsHUD.closePanel();
+                this._consumed = !0;
+                return
+            }
+            if (this._consumed) {
+                if (s <= this.cfg.releaseIdle) return;
+                this._consumed = !1
+            }
+            if (!this.scroll.paused && this.state !== "travel") {
+                if (this.state === "cooldown") {
+                    if (s < this.cfg.cooldown) return;
+                    this.toRest()
+                }
+                this.state === "rest"
+                    ? (this._acc = 0, this.state = "tension")
+                    : this.state === "spring" && (this.killSpring(), this._acc = Math.sign(t) === Math.sign(this._accAtRelease) ? this._accAtRelease : this.accFromTension(this._tensionPx || 0), this.state = "tension");
+                this.state === "tension" && (this._acc += t, Math.abs(this._acc) >= this.cfg.commitWheel * this.commitScale ? this.commit(Math.sign(this._acc)) : this.setTensionPx(this.rubber(this._acc)))
+            }
+        }
+    }
+
+    onTouchStart(t) {
+        var o;
+        if (t.touches && t.touches.length > 1) return this.abortTouch(), !1;
+        const e = (o = t.touches) == null ? void 0 : o[0];
+        if (!e) return !1;
+        const s = this.inNativeScroller(t);
+        const i = this.experience.pointsHUD;
+        const n = this.hudOpen || performance.now() - ((i == null ? void 0 : i.closedAtPerf) ?? -1e9) < 120;
+        return this._touch = { x0: e.clientX, y0: e.clientY, axis: null, native: s, closer: n, active: !1, accBase: 0, samples: [] }, !this.locked && this.state === "spring" && (this.killSpring(), this._touch.accBase = this.accFromTension(this._tensionPx || 0), this.state = "tension", this._acc = this._touch.accBase), !1
+    }
+
+    onTouchMove(t) {
+        var o, h, r, l;
+        const e = this._touch;
+        if (!e) return !1;
+        if (t.touches && t.touches.length > 1) return this.abortTouch(), !1;
+        if (e.native) return !1;
+        t.cancelable && t.preventDefault();
+        const s = (o = t.touches) == null ? void 0 : o[0];
+        if (!s) return !1;
+        const i = s.clientX - e.x0;
+        const n = s.clientY - e.y0;
+        if (e.closer) return this.hudOpen && Math.hypot(i, n) >= this.cfg.tapSlop && this.experience.pointsHUD.closePanel(), !1;
+        if (this.locked || !this.stops || this.scroll.paused) return !1;
+        if (e.axis === null) {
+            const u = ((r = (h = this.experience.camera) == null ? void 0 : h.dragCfg) == null ? void 0 : r.axisThresh) ?? 6;
+            if (Math.abs(i) < u && Math.abs(n) < u) return !1;
+            const f = (l = this.experience.camera) == null ? void 0 : l.drag;
+            f != null && f.active && f.axis ? e.axis = f.axis === "x" ? "x" : "y" : e.axis = Math.abs(i) > Math.abs(n) ? "x" : "y"
+        }
+        if (e.axis !== "y" || this.state === "travel") return !1;
+        if (!e.active) {
+            if (Math.abs(n) < this.cfg.tapSlop) return !1;
+            e.active = !0, (this.state === "rest" || this.state === "cooldown") && (this.state = "tension", e.accBase = 0)
+        }
+        return this.state !== "tension" || (this._acc = e.accBase - n, e.samples.push({ t: t.timeStamp || performance.now(), acc: this._acc }), e.samples.length > 8 && e.samples.shift(), this.setTensionPx(this.rubber(this._acc))), !1
+    }
+
+    onTouchEnd(t) {
+        const e = this._touch;
+        if (!e || t.touches && t.touches.length > 0 || (this._touch = null, !e.active || this.state !== "tension")) return !1;
+        let s = 0;
+        const i = e.samples;
+        const n = t.timeStamp || performance.now();
+        if (i.length >= 2 && n - i[i.length - 1].t < 120) {
+            let r = i.length - 1;
+            for (; r > 0 && i[i.length - 1].t - i[r - 1].t <= 100;) r--;
+            const l = i[i.length - 1].t - i[r].t;
+            l > 0 && (s = (i[i.length - 1].acc - i[r].acc) / l)
+        }
+        const o = this._acc - e.accBase;
+        const h = this.commitScale;
+        return this.lastRelease = { dist: Math.round(o), v: +s.toFixed(3), n: i.length }, Math.abs(o) >= this.cfg.commitTouch * h ? this.commit(Math.sign(o)) : Math.abs(s) >= this.cfg.commitVelocity * h ? this.commit(Math.sign(s)) : this.release(), !1
+    }
+
+    abortTouch() {
+        const t = this._touch;
+        this._touch = null, t != null && t.active && this.state === "tension" && this.release()
+    }
+
+    onKey(t) {
+        var n, o;
+        if (!C.has(t.key) || t.metaKey || t.ctrlKey || t.altKey || this.contactOpen) return;
+        const e = document.activeElement;
+        if (e && e !== document.body && (e.matches(N) || e.isContentEditable || e.closest("[role=dialog]")) || (t.preventDefault(), this.locked || !this.stops)) return;
+        if (this.hudOpen) {
+            this.experience.pointsHUD.closePanel();
+            return
+        }
+        if (this.scroll.paused || this.state === "travel") return;
+        const s = this.stops.length - 1;
+        if (t.key === "Home" || t.key === "End") {
+            (t.key === "Home" ? this.index !== 0 : this.index !== s) && (t.key === "Home" ? (n = this.experience.router) == null || n.go("home", { top: !0 }) : (o = this.experience.pageTransition) == null || o.toFooter(!1));
+            return
+        }
+        let i;
+        t.key === "ArrowUp" || t.key === "PageUp" || t.key === " " && t.shiftKey ? i = this.index - 1 : i = this.index + 1;
+        i = Math.max(0, Math.min(s, i));
+        (this.state === "spring" || this.state === "tension") && this.flattenTension();
+        i !== this.index && this.travelTo(i)
+    }
+
+    release() {
+        if (this.state !== "tension") return;
+        this._accAtRelease = this._acc;
+        this._acc = 0;
+        const t = this._tensionPx || 0;
+        if (!t) {
+            this.toRest();
+            return
+        }
+        this.state = "spring";
+        this._tensionProxy.v = t;
+        this._springTw = v.to(this._tensionProxy, {
+            v: 0,
+            duration: this.cfg.springBack,
+            ease: this.cfg.springEase,
+            onUpdate: () => this.setTensionPx(this._tensionProxy.v),
+            onComplete: () => {
+                this._springTw = null;
+                this.setTensionPx(0);
+                this.state === "spring" && this.toRest()
+            }
+        })
+    }
+
+    killSpring() {
+        var t;
+        (t = this._springTw) == null || t.kill();
+        this._springTw = null
+    }
+
+    commit(t) {
+        const e = Math.max(0, Math.min(this.stops.length - 1, this.index + t));
+        if (e === this.index) {
+            this.release();
+            return
+        }
+        this.flattenTension();
+        this.travelTo(e)
+    }
+
+    flattenTension() {
+        this.killSpring();
+        const t = this._tensionPx || 0;
+        t && this.lenis.scrollTo(this.stopPx[this.index] + t, { immediate: !0, force: !0 });
+        this.setTensionPx(0);
+        this._acc = 0
+    }
+
+    travelTo(t, e = {}) {
+        if (!this.stops) return;
+        const s = this.index;
+        let i, n;
+        if (Math.abs(t - s) === 1) ({ duration: i, ease: n } = this.leg(s, t));
+        else {
+            let h = 0;
+            const r = Math.sign(t - s);
+            for (let l = s; l !== t; l += r) h += this.leg(l, l + r).duration;
+            i = Math.min(this.cfg.travelJumpMax, h);
+            n = this.cfg.easeCross
+        }
+        e.scale != null && (i *= e.scale);
+        this.reducedMotion && (i = this.cfg.reducedTravel, n = this.cfg.easeBlock);
+        this.index = t;
+        this.state = "travel";
+        this.setTravelSmoothing(!0);
+        const o = Math.abs(t - s) === 1 ? this.leg(s, t).kind : "jump";
+        this._travel = { to: t, duration: i, ease: n, fromPx: this.lenis.animatedScroll, from: s, kind: o, t0: this.time.elapsed };
+        this.lenis.scrollTo(this.stopPx[t], {
+            duration: i,
+            easing: v.parseEase(n),
+            lock: !0,
+            force: !0,
+            onComplete: () => this.onArrive(t)
+        })
+    }
+
+    onArrive(t) {
+        if (this.state !== "travel" || this.index !== t) return;
+        this._travel = null;
+        this._needsMeasure && this.applyMeasure();
+        const e = this.lenis.animatedScroll;
+        Math.abs(e - this.stopPx[t]) > .5 && this.lenis.scrollTo(this.stopPx[t], { immediate: !0, force: !0 });
+        this.state = "cooldown";
+        this._stillSince = this.time.elapsed
+    }
+
+    landAt(t) {
+        this._idleTo = t
+    }
+
+    toRest() {
+        this.state = "rest";
+        this.restSince = this.time.elapsed;
+        this._acc = 0
+    }
+
+    setTravelSmoothing(t) {
+        this._baseSmoothing == null && (this._baseSmoothing = this.scroll.smoothing);
+        this._travelSmooth = t;
+        this.scroll.smoothing = t ? this.cfg.travelSmoothing : this._baseSmoothing
+    }
+
+    applyMeasure() {
+        this._needsMeasure = !1;
+        this.lenis.resize();
+        this.measure()
+    }
+
+    nearestStop(t, e = 0) {
+        const s = this.stopPx;
+        if (e > 0) {
+            for (let o = 0; o < s.length; o++) if (s[o] >= t - .5) return o;
+            return s.length - 1
+        }
+        if (e < 0) {
+            for (let o = s.length - 1; o >= 0; o--) if (s[o] <= t + .5) return o;
+            return 0
+        }
+        let i = 0, n = 1 / 0;
+        for (let o = 0; o < s.length; o++) {
+            const h = Math.abs(s[o] - t);
+            h < n && (n = h, i = o)
+        }
+        return i
+    }
+
+    update() {
+        var s, i;
+        const t = this.time.elapsed;
+        if (this.locked) {
+            this.scroll.locked && Math.abs(this.lenis.animatedScroll) > .5 && this.lenis.scrollTo(0, { immediate: !0, force: !0 });
+            this.state !== "idle" && (this.killSpring(), this._travelSmooth && this.setTravelSmoothing(!1), this.setTensionPx(0), this._acc = 0, this._touch = null, this._travel = null, this.state = "idle");
+            return
+        }
+        if (!this.stops && !this.buildStops()) return;
+        if (this.state === "idle") {
+            this.applyMeasure();
+            this.index = this._idleTo ?? 0;
+            this._idleTo = null;
+            this.lenis.scrollTo(this.stopPx[this.index], { immediate: !0, force: !0 });
+            this._lastY = this.lenis.animatedScroll;
+            this._stillSince = t;
+            this.toRest();
+            D && !this._toSamana && !((s = this.experience.router) != null && s.onPage) && (this._toSamana = { at: t + 800, to: this.stops.findIndex(n => n.kind === "s") });
+            return
+        }
+        if ((i = this._toSamana) != null && i.at && t >= this._toSamana.at) {
+            const n = this._toSamana.to;
+            this._toSamana.at = 0;
+            this.state === "rest" && n > this.index && !this.scroll.paused && this.travelTo(n)
+        }
+        if (this.contactOpen || this.scroll.paused) {
+            this._stillSince = t;
+            this.scroll.paused && this.state === "tension" && (this.setTensionPx(0), this._acc = 0, this.toRest());
+            return
+        }
+        if (this._needsMeasure && t - this._resizeAt > 150 && this.state !== "travel" && (this.applyMeasure(), this.state !== "tension" && this.state !== "spring" && this.lenis.scrollTo(this.stopPx[this.index], { immediate: !0, force: !0 }), this._lastY = this.lenis.animatedScroll), this.state === "travel" && this.lenis.isScrolling !== "smooth" && this._travel) {
+            const n = this.lenis.animatedScroll;
+            const o = this.stopPx[this.index];
+            if (Math.abs(n - o) > 1) {
+                const h = this._travel;
+                const r = Math.min(1, Math.abs(o - n) / Math.max(1, Math.abs(o - h.fromPx)));
+                h.fromPx = n;
+                typeof h.ease == "function" && (h.ease = this.cfg.easeToFooter);
+                this.lenis.scrollTo(o, {
+                    duration: Math.max(this.reducedMotion ? .3 : .6, h.duration * r),
+                    easing: v.parseEase(h.ease),
+                    lock: !0,
+                    force: !0,
+                    onComplete: () => this.onArrive(this.index)
+                })
+            } else this.onArrive(this.index)
+        }
+        this.state === "cooldown" && t - this._lastWheel >= this.cfg.cooldown && this.toRest();
+        this._travelSmooth && this.state !== "travel" && this.state !== "cooldown" && (this.state !== "rest" || this.scroll.progress === this.scroll.target) && this.setTravelSmoothing(!1);
+        this.state === "tension" && !this._touch && t - this._lastWheel >= this.cfg.releaseIdle && this.release();
+        const e = this.lenis.animatedScroll;
+        if (Math.abs(e - this._lastY) > .5 && (this._lastDir = Math.sign(e - this._lastY) || this._lastDir, this._lastY = e, this._stillSince = t), (this.state === "rest" || this.state === "cooldown") && !this._touch && t - this._stillSince > this.cfg.safetyIdle && Math.abs(e - this.stopPx[this.index]) > 1) {
+            const n = this.nearestStop(e, this._lastDir);
+            if (Math.abs(this.stopPx[n] - e) <= 1) this.index = n, this.toRest();
+            else {
+                const o = this.stops.length - 1;
+                const h = Math.max(0, Math.min(o, this.stopPx[n] > e ? n - 1 : n + 1));
+                const r = Math.max(1, Math.abs(this.stopPx[n] - this.stopPx[h]));
+                const l = Math.min(1, Math.abs(this.stopPx[n] - e) / r);
+                this.index = h;
+                this.travelTo(n, { scale: Math.max(.5, l) })
+            }
+        }
+    }
+
+    setDebug() {}
+
+    destroy() {
+        this.time.off("tick.step");
+        this.sizes.off("resize.step");
+        window.removeEventListener("keydown", this._onKey);
+        window.removeEventListener("touchcancel", this._onTouchCancel);
+        this.killSpring();
+        this.scroll.interceptor && (this.scroll.interceptor = null);
+        this.scroll.tension = 0
+    }
+}
+
+function w(_) {
+    const t = Math.max(0, Math.min(1, _));
+    return t * t * (3 - 2 * t)
+}
+
+function F(_) {
+    const t = Math.max(0, Math.min(1, _));
+    return .5 - Math.sin(Math.asin(1 - 2 * t) / 3)
+}
+
+export { E as STEP_CONFIG, R as default };

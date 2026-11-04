@@ -1,134 +1,222 @@
-const A=(function(){const t=typeof
-document<"u"&&document.createElement("link").relList;return
-t&&t.supports&&t.supports("modulepreload")?"modulepreload":"preload"})(),_=function(e){return"/"+e},V={},g=function(t,r,c){let
-l=Promise.resolve();if(r&&r.length>0){let o=function(s){return
-Promise.all(s.map(d=>Promise.resolve(d).then(i=>({status:"fulfilled",value:i}),i=>({status:"rejected",reason:i}))))};document.getElementsByTagName("link");const
-Q=document.querySelector("meta[property=csp-nonce]"),u=(Q==null?void
-0:Q.nonce)||(Q==null?void 0:Q.getAttribute("nonce"));l=o(r.map(s=>{if(s=_(s),s
-in V)return;V[s]=!0;const
-d=s.endsWith(".css"),i=d?'[rel="stylesheet"]':"";if(document.querySelector(`link[href="${s}"]${i}`))return;const
-a=document.createElement("link");if(a.rel=d?"stylesheet":A,d||(a.as="script"),a.crossOrigin="",a.href=s,u&&a.setAttribute("nonce",u),document.head.appendChild(a),d)return
-new
-Promise((f,p)=>{a.addEventListener("load",f),a.addEventListener("error",()=>p(new
-Error(`Unable to preload CSS for ${s}`)))})}))}function n(o){const Q=new
-Event("vite:preloadError",{cancelable:!0});if(Q.payload=o,window.dispatchEvent(Q),!Q.defaultPrevented)throw
-o}return l.then(o=>{for(const Q of
-o||[])Q.status==="rejected"&&n(Q.reason);return
-t().catch(n)})},h=["Hello","你好","नमस्ते","Hola","مرحبا","Olá","নমস্কার","Привет","こんにちは","Bonjour","Samana"],$=/^[
--ɏЀ-ӿ]+$/,M=360,L=300,Z=160,P="cubic-bezier(.25,1,.5,1)",k="perspective(800px)
-translate3d(0,100%,0) rotateX(-90deg)",O="perspective(800px) translate3d(0,0,0)
-rotateX(0deg)",R="perspective(800px) translate3d(0,-100%,0)
-rotateX(90deg)";function b(e,t,r,c,l){const
-n=M,o=l?Z:L,Q=l?{opacity:0}:{transform:k},u=l?{opacity:1}:{transform:O},s=l?{opacity:0}:{transform:R},d=l?"linear":P,i=(E,y)=>({...E,offset:y,easing:d});let
-a,f,p;t===0?[a,f,p]=[[i(u,0),s],n,o]:t===r?[a,f,p]=[[i(Q,0),u],t*n,o]:[a,f,p]=[[i(Q,0),i(u,o/(n+o)),i(u,n/(n+o)),s],t*n,n+o];const
-H=e.animate(a,{duration:p,delay:f,fill:"both"});return H.startTime=c,H}const
-m={word:"M306.8 11.7Q213.8 11.7 147.8 -17.9Q81.8 -47.5 46.8 -103.6Q11.8 -159.7
-11.8 -238.6H156.7Q157.5 -199 175.8 -170.4Q194.1 -141.9 227.8 -126.8Q261.6 -111.6
-308.1 -111.6Q350 -111.6 381 -123.1Q412 -134.7 429.3 -155.7Q446.7 -176.7 446.7
--205Q446.7 -228.4 433.3 -245.9Q419.9 -263.3 391.2 -276.3Q362.5 -289.4 316.1
--299.4L239.5 -316Q131.4 -339.4 78.6 -389.8Q25.9 -440.2 25.9 -518.1Q25.9 -584.5
-60.5 -634.1Q95 -683.8 157.2 -711.5Q219.4 -739.3 301.9 -739.3Q385.8 -739.3 446.8
--711Q507.9 -682.8 541.8 -630.1Q575.6 -577.5 577.9 -504.3H437.2Q433.5 -556.3
-397.4 -586Q361.3 -615.7 302.7 -615.7Q265.8 -615.7 237.2 -604.2Q208.6 -592.6
-192.4 -572.3Q176.1 -552 176.1 -525.4Q176.1 -502.8 188.9 -486.6Q201.7 -470.3
-229.5 -458.1Q257.2 -445.8 301.8 -436L371.4 -420.8Q429.6 -408.4 472 -390.1Q514.3
--371.8 541.7 -346.6Q569 -321.4 582.3 -288.7Q595.5 -255.9 595.5 -215Q595.5 -144.9
-560.7 -94Q525.9 -43.1 461.1 -15.7Q396.4 11.7 306.8 11.7ZM833.3 8.6Q781.8 8.6
-741.8 -8.4Q701.8 -25.5 678.7 -59.8Q655.7 -94 655.7 -145.3Q655.7 -189.2 671.9
--218.2Q688 -247.2 716 -264.9Q744 -282.6 780.5 -291.9Q817 -301.1 857.1
--304.9Q904.3 -309.6 932.2 -314Q960.2 -318.3 972.3 -326.7Q984.4 -335 984.4
--351.6V-354.9Q984.4 -374 974.2 -388.5Q964.1 -403 945.3 -411.2Q926.5 -419.5 900.2
--419.5Q873.5 -419.5 853.3 -411.1Q833.1 -402.6 821.3 -387.5Q809.6 -372.4 807.6
--352.4H672.3Q675.8 -405.8 703.9 -444.8Q732.1 -483.7 782.8 -505.1Q833.6 -526.4
-904.4 -526.4Q957.2 -526.4 998.6 -514.4Q1040 -502.3 1068.5 -479.3Q1097 -456.3
-1111.8 -423.6Q1126.5 -390.9 1126.5 -349.7V0H985.9V-72.7H984Q970.5 -47.6 950.3
--29.3Q930.1 -11 901.5 -1.2Q872.8 8.6 833.3 8.6ZM873 -91.2Q907.7 -91.2 932.9
--104Q958.2 -116.7 971.8 -138.7Q985.4 -160.6 985.4 -188.5V-240.3Q979.2 -236.9
-968.9 -233.8Q958.6 -230.7 944.9 -227.8Q931.3 -224.9 915.2 -222.2Q899.2 -219.4
-881.7 -216.8Q857.2 -213.1 837.1 -205Q817.1 -197 805.3 -183.5Q793.4 -170 793.4
--149.4Q793.4 -131.2 803.3 -118.1Q813.2 -105 831.1 -98.1Q849 -91.2 873
--91.2ZM1184.7 0V-515.6H1323.4V-422.9Q1335.6 -450.7 1353.2 -470.7Q1378.1 -498.5
-1410.8 -512.5Q1443.5 -526.4 1479.7 -526.4Q1538.7 -526.4 1582.2 -492.2Q1615.4
--466.3 1628.6 -426.3Q1638.4 -449.2 1654.5 -467.3Q1679.4 -495.6 1715.3
--511Q1751.2 -526.4 1793.1 -526.4Q1842.9 -526.4 1882.3 -504.9Q1921.6 -483.4 1944
--442.1Q1966.5 -400.9 1966.5 -341.8V0H1822.9V-315.4Q1822.9 -361.8 1797.8
--384.8Q1772.6 -407.7 1735.5 -407.7Q1708.2 -407.7 1687.7 -395.5Q1667.2 -383.3
-1656.2 -361.6Q1645.2 -339.8 1645.2 -310.5V0H1506.5V-319.3Q1506.5 -359.4 1482.6
--383.5Q1458.7 -407.7 1420.6 -407.7Q1395.2 -407.7 1374.4 -395.8Q1353.7 -383.8
-1341.2 -360.6Q1328.8 -337.4 1328.8 -304.2V0ZM2186.1 8.6Q2134.6 8.6 2094.6
--8.4Q2054.6 -25.5 2031.6 -59.8Q2008.6 -94 2008.6 -145.3Q2008.6 -189.2 2024.7
--218.2Q2040.9 -247.2 2068.9 -264.9Q2096.8 -282.6 2133.3 -291.9Q2169.8 -301.1
-2209.9 -304.9Q2257.2 -309.6 2285.1 -314Q2313 -318.3 2325.1 -326.7Q2337.2 -335
-2337.2 -351.6V-354.9Q2337.2 -374 2327.1 -388.5Q2316.9 -403 2298.1 -411.2Q2279.4
--419.5 2253 -419.5Q2226.3 -419.5 2206.1 -411.1Q2185.9 -402.6 2174.2
--387.5Q2162.4 -372.4 2160.5 -352.4H2025.1Q2028.6 -405.8 2056.8 -444.8Q2084.9
--483.7 2135.7 -505.1Q2186.4 -526.4 2257.2 -526.4Q2310 -526.4 2351.4
--514.4Q2392.8 -502.3 2421.3 -479.3Q2449.9 -456.3 2464.6 -423.6Q2479.3 -390.9
-2479.3 -349.7V0H2338.8V-72.7H2336.8Q2323.3 -47.6 2303.1 -29.3Q2283 -11 2254.3
--1.2Q2225.6 8.6 2186.1 8.6ZM2225.8 -91.2Q2260.5 -91.2 2285.8 -104Q2311.1 -116.7
-2324.7 -138.7Q2338.2 -160.6 2338.2 -188.5V-240.3Q2332 -236.9 2321.7
--233.8Q2311.4 -230.7 2297.8 -227.8Q2284.1 -224.9 2268.1 -222.2Q2252 -219.4
-2234.5 -216.8Q2210 -213.1 2190 -205Q2170 -197 2158.1 -183.5Q2146.3 -170 2146.3
--149.4Q2146.3 -131.2 2156.2 -118.1Q2166.1 -105 2183.9 -98.1Q2201.8 -91.2 2225.8
--91.2ZM2679.9 -286.6V0H2535.8V-515.6H2677.4V-434.1Q2696.5 -466.3 2722.8
--488.3Q2768.3 -526.4 2838.6 -526.4Q2893.7 -526.4 2934.3 -502.7Q2974.8 -479 2997
--433.6Q3019.2 -388.2 3019.2 -322.8V0H2875.7V-296.4Q2875.7 -348.6 2851
--375.5Q2826.4 -402.3 2781 -402.3Q2751.2 -402.3 2728.2 -390.1Q2705.3 -377.9
-2692.6 -352.3Q2679.9 -326.7 2679.9 -286.6ZM3242.5 8.6Q3191 8.6 3151 -8.4Q3111
--25.5 3088 -59.8Q3065 -94 3065 -145.3Q3065 -189.2 3081.1 -218.2Q3097.2 -247.2
-3125.2 -264.9Q3153.2 -282.6 3189.7 -291.9Q3226.2 -301.1 3266.3 -304.9Q3313.5
--309.6 3341.5 -314Q3369.4 -318.3 3381.5 -326.7Q3393.6 -335 3393.6
--351.6V-354.9Q3393.6 -374 3383.5 -388.5Q3373.3 -403 3354.5 -411.2Q3335.8 -419.5
-3309.4 -419.5Q3282.7 -419.5 3262.5 -411.1Q3242.3 -402.6 3230.6 -387.5Q3218.8
--372.4 3216.9 -352.4H3081.5Q3085 -405.8 3113.2 -444.8Q3141.3 -483.7 3192.1
--505.1Q3242.8 -526.4 3313.6 -526.4Q3366.4 -526.4 3407.8 -514.4Q3449.2 -502.3
-3477.7 -479.3Q3506.3 -456.3 3521 -423.6Q3535.7 -390.9 3535.7
--349.7V0H3395.2V-72.7H3393.2Q3379.7 -47.6 3359.5 -29.3Q3339.4 -11 3310.7
--1.2Q3282 8.6 3242.5 8.6ZM3282.2 -91.2Q3316.9 -91.2 3342.2 -104Q3367.5 -116.7
-3381 -138.7Q3394.6 -160.6 3394.6 -188.5V-240.3Q3388.4 -236.9 3378.1
--233.8Q3367.8 -230.7 3354.2 -227.8Q3340.5 -224.9 3324.5 -222.2Q3308.4 -219.4
-3290.9 -216.8Q3266.4 -213.1 3246.4 -205Q3226.4 -197 3214.5 -183.5Q3202.6 -170
-3202.6 -149.4Q3202.6 -131.2 3212.6 -118.1Q3222.5 -105 3240.3 -98.1Q3258.2 -91.2
-3282.2 -91.2Z",reg:"M3404.8 -632.4A108.2 108.2 0 1 1 3621.3 -632.4A108.2 108.2 0
-1 1 3404.8 -632.4ZM3428.8 -632.4A84.3 84.3 0 1 0 3597.3 -632.4A84.3 84.3 0 1 0
-3428.8 -632.4ZM3470.7 -578.5V-686.3H3516Q3528.1 -686.3 3537 -681.9Q3545.9 -677.5
-3550.8 -669.4Q3555.7 -661.3 3555.7 -650.1Q3555.7 -638.8 3550.7 -630.9Q3545.9
--623.2 3537.1 -619.2L3559.4 -578.5H3529.4L3510.1 -614.8H3498V-578.5ZM3498
--636.3H3509.8Q3515.4 -636.3 3519.3 -637.8Q3523.1 -639.2 3525.2 -642.2Q3527.2
--645.3 3527.2 -650.1Q3527.2 -655 3525.2 -658.1Q3523.1 -661.2 3519.3
--662.7Q3515.4 -664.2 3509.8 -664.2H3498Z",regSmall:"M3419.1 -701.2A182.8 182.8 0
-1 1 3784.6 -701.2A182.8 182.8 0 1 1 3419.1 -701.2ZM3467 -701.2A134.8 134.8 0 1 0
-3736.7 -701.2A134.8 134.8 0 1 0 3467 -701.2ZM3531.9 -612.3V-790.1H3606.7Q3626.6
--790.1 3641.3 -782.9Q3656 -775.7 3664.1 -762.3Q3672.2 -748.9 3672.2
--730.4Q3672.2 -711.7 3664 -698.7Q3656 -686 3641.5 -679.3L3678.3
--612.3H3628.9L3597 -672.2H3577.1V-612.3ZM3577.1 -707.6H3596.5Q3605.7 -707.6
-3612.1 -710Q3618.5 -712.4 3621.8 -717.4Q3625.2 -722.4 3625.2 -730.4Q3625.2
--738.4 3621.8 -743.6Q3618.5 -748.7 3612.1 -751.2Q3605.7 -753.7 3596.5
--753.7H3577.1Z",vb:[11.8,-740.6,3609.5,752.3],vbSmall:[11.8,-884,3772.8,895.7],wordL:11.8,wordR:3535.8};function
-T({small:e=!1,both:t=!1,cls:r=""}={}){const
-c="http://www.w3.org/2000/svg",l=e&&!t?m.vbSmall:m.vb,n=document.createElementNS(c,"svg");n.setAttribute("viewBox",l.join("
-")),n.setAttribute("aria-hidden","true"),n.setAttribute("focusable","false"),r&&n.setAttribute("class",r);const
-o=t?[[m.word],[m.reg,"wm-reg"],[m.regSmall,"wm-reg-s"]]:[[m.word],[e?m.regSmall:m.reg]];for(const[Q,u]of
-o){const
-s=document.createElementNS(c,"path");s.setAttribute("d",Q),u&&s.setAttribute("class",u),n.appendChild(s)}return
-n}function C(){var n;const e=[...document.querySelectorAll("body > .loader
-.loader-center > .loader-word")];if(!e.length)return null;const
-t=matchMedia("(prefers-reduced-motion:
-reduce)").matches,r=h.length-1,c=((n=document.timeline)==null?void
-0:n.currentTime)??performance.now(),l={at:c,rm:t,mark:null,anims:e.slice(0,r).map((o,Q)=>b(o,Q,r,c,t))};return
-window.__samanaHello=l,l}function F(e){const t=document.querySelector("body >
-.loader > .loader-in");if(!e||!t||t.querySelector(":scope >
-.curtain-mid"))return;const
-r=document.createElement("div");r.className="curtain-mid";const
-c=T({both:!0,cls:"curtain-mark"});r.appendChild(c),t.appendChild(r),e.mark=c,e.anims.push(b(c,h.length-1,h.length-1,e.at,e.rm))}function
-q(){const
-e=document.querySelector('link[rel="preload"][as="style"][data-css]');return
-e?new Promise(t=>{const
-r=document.createElement("link");r.rel="stylesheet",e.crossOrigin!=null&&(r.crossOrigin=e.crossOrigin),r.onload=r.onerror=()=>t(),r.href=e.href,e.after(r)}):Promise.resolve()}function
-x(){return document.visibilityState==="hidden"?Promise.resolve():new
-Promise(e=>requestAnimationFrame(()=>setTimeout(e,0)))}var S;const
-D=((S=/[?&]boot=(shell|classic)(?:&|$)/.exec(location.search))==null?void
-0:S[1])||void 0||"shell",v=q(),w=x();if(D==="shell"){const
-e=w.then(C);Promise.all([v,e]).then(([,t])=>(F(t),g(()=>import("app-CRX_gFP4.js").then(r=>r.a),[])))}else
-Promise.all([v,w]).then(()=>g(()=>import("app-CRX_gFP4.js").then(e=>e.a),[]));export{$
-as C,L as F,h as H,P as Q,Z as R,m as W,g as _,M as a,b as f,T as w};
+const A = (function () {
+    const t = typeof document < "u" && document.createElement("link").relList;
+    return t && t.supports && t.supports("modulepreload") ? "modulepreload" : "preload";
+})();
+
+const _ = function (e) {
+    return "/" + e;
+};
+
+const V = {};
+
+const g = function (t, r, c) {
+    let l = Promise.resolve();
+
+    if (r && r.length > 0) {
+        let o = function (s) {
+            return Promise.all(
+                s.map(d =>
+                    Promise.resolve(d).then(
+                        i => ({ status: "fulfilled", value: i }),
+                        i => ({ status: "rejected", reason: i })
+                    )
+                )
+            );
+        };
+
+        document.getElementsByTagName("link");
+        const Q = document.querySelector("meta[property=csp-nonce]");
+        const u = (Q == null ? void 0 : Q.nonce) || (Q == null ? void 0 : Q.getAttribute("nonce"));
+
+        l = o(
+            r.map(s => {
+                if (((s = _(s)), s in V)) return;
+                V[s] = !0;
+
+                const d = s.endsWith(".css");
+                const i = d ? '[rel="stylesheet"]' : "";
+
+                if (document.querySelector(`link[href="${s}"]${i}`)) return;
+
+                const a = document.createElement("link");
+                if (
+                    ((a.rel = d ? "stylesheet" : A),
+                    d || (a.as = "script"),
+                    (a.crossOrigin = ""),
+                    (a.href = s),
+                    u && a.setAttribute("nonce", u),
+                    document.head.appendChild(a),
+                    d)
+                )
+                    return new Promise((f, p) => {
+                        a.addEventListener("load", f);
+                        a.addEventListener("error", () => p(new Error(`Unable to preload CSS for ${s}`)));
+                    });
+            })
+        );
+    }
+
+    function n(o) {
+        const Q = new Event("vite:preloadError", { cancelable: !0 });
+        if (((Q.payload = o), window.dispatchEvent(Q), !Q.defaultPrevented)) throw o;
+    }
+
+    return l.then(o => {
+        for (const Q of o || []) Q.status === "rejected" && n(Q.reason);
+        return t().catch(n);
+    });
+};
+
+const h = ["Hello", "你好", "नमस्ते", "Hola", "مرحبا", "Olá", "নমস্কার", "Привет", "こんにちは", "Bonjour", "Samana"];
+
+const $ = /^[ -ɏЀ-ӿ]+$/;
+
+const M = 360;
+const L = 300;
+const Z = 160;
+const P = "cubic-bezier(.25,1,.5,1)";
+const k = "perspective(800px) translate3d(0,100%,0) rotateX(-90deg)";
+const O = "perspective(800px) translate3d(0,0,0) rotateX(0deg)";
+const R = "perspective(800px) translate3d(0,-100%,0) rotateX(90deg)";
+
+function b(e, t, r, c, l) {
+    const n = M;
+    const o = l ? Z : L;
+    const Q = l ? { opacity: 0 } : { transform: k };
+    const u = l ? { opacity: 1 } : { transform: O };
+    const s = l ? { opacity: 0 } : { transform: R };
+    const d = l ? "linear" : P;
+    const i = (E, y) => ({ ...E, offset: y, easing: d });
+
+    let a, f, p;
+
+    t === 0
+        ? ([a, f, p] = [[i(u, 0), s], n, o])
+        : t === r
+        ? ([a, f, p] = [[i(Q, 0), u], t * n, o])
+        : ([a, f, p] = [
+              [i(Q, 0), i(u, o / (n + o)), i(u, n / (n + o)), s],
+              t * n,
+              n + o,
+          ]);
+
+    const H = e.animate(a, { duration: p, delay: f, fill: "both" });
+    return (H.startTime = c), H;
+}
+
+const m = {
+    word: "M306.8 11.7Q213.8 11.7 147.8 -17.9Q81.8 -47.5 46.8 -103.6Q11.8 -159.7 11.8 -238.6H156.7Q157.5 -199 175.8 -170.4Q194.1 -141.9 227.8 -126.8Q261.6 -111.6 308.1 -111.6Q350 -111.6 381 -123.1Q412 -134.7 429.3 -155.7Q446.7 -176.7 446.7 -205Q446.7 -228.4 433.3 -245.9Q419.9 -263.3 391.2 -276.3Q362.5 -289.4 316.1 -299.4L239.5 -316Q131.4 -339.4 78.6 -389.8Q25.9 -440.2 25.9 -518.1Q25.9 -584.5 60.5 -634.1Q95 -683.8 157.2 -711.5Q219.4 -739.3 301.9 -739.3Q385.8 -739.3 446.8 -711Q507.9 -682.8 541.8 -630.1Q575.6 -577.5 577.9 -504.3H437.2Q433.5 -556.3 397.4 -586Q361.3 -615.7 302.7 -615.7Q265.8 -615.7 237.2 -604.2Q208.6 -592.6 192.4 -572.3Q176.1 -552 176.1 -525.4Q176.1 -502.8 188.9 -486.6Q201.7 -470.3 229.5 -458.1Q257.2 -445.8 301.8 -436L371.4 -420.8Q429.6 -408.4 472 -390.1Q514.3 -371.8 541.7 -346.6Q569 -321.4 582.3 -288.7Q595.5 -255.9 595.5 -215Q595.5 -144.9 560.7 -94Q525.9 -43.1 461.1 -15.7Q396.4 11.7 306.8 11.7ZM833.3 8.6Q781.8 8.6 741.8 -8.4Q701.8 -25.5 678.7 -59.8Q655.7 -94 655.7 -145.3Q655.7 -189.2 671.9 -218.2Q688 -247.2 716 -264.9Q744 -282.6 780.5 -291.9Q817 -301.1 857.1 -304.9Q904.3 -309.6 932.2 -314Q960.2 -318.3 972.3 -326.7Q984.4 -335 984.4 -351.6V-354.9Q984.4 -374 974.2 -388.5Q964.1 -403 945.3 -411.2Q926.5 -419.5 900.2 -419.5Q873.5 -419.5 853.3 -411.1Q833.1 -402.6 821.3 -387.5Q809.6 -372.4 807.6 -352.4H672.3Q675.8 -405.8 703.9 -444.8Q732.1 -483.7 782.8 -505.1Q833.6 -526.4 904.4 -526.4Q957.2 -526.4 998.6 -514.4Q1040 -502.3 1068.5 -479.3Q1097 -456.3 1111.8 -423.6Q1126.5 -390.9 1126.5 -349.7V0H985.9V-72.7H984Q970.5 -47.6 950.3 -29.3Q930.1 -11 901.5 -1.2Q872.8 8.6 833.3 8.6ZM873 -91.2Q907.7 -91.2 932.9 -104Q958.2 -116.7 971.8 -138.7Q985.4 -160.6 985.4 -188.5V-240.3Q979.2 -236.9 968.9 -233.8Q958.6 -230.7 944.9 -227.8Q931.3 -224.9 915.2 -222.2Q899.2 -219.4 881.7 -216.8Q857.2 -213.1 837.1 -205Q817.1 -197 805.3 -183.5Q793.4 -170 793.4 -149.4Q793.4 -131.2 803.3 -118.1Q813.2 -105 831.1 -98.1Q849 -91.2 873 -91.2ZM1184.7 0V-515.6H1323.4V-422.9Q1335.6 -450.7 1353.2 -470.7Q1378.1 -498.5 1410.8 -512.5Q1443.5 -526.4 1479.7 -526.4Q1538.7 -526.4 1582.2 -492.2Q1615.4 -466.3 1628.6 -426.3Q1638.4 -449.2 1654.5 -467.3Q1679.4 -495.6 1715.3 -511Q1751.2 -526.4 1793.1 -526.4Q1842.9 -526.4 1882.3 -504.9Q1921.6 -483.4 1944 -442.1Q1966.5 -400.9 1966.5 -341.8V0H1822.9V-315.4Q1822.9 -361.8 1797.8 -384.8Q1772.6 -407.7 1735.5 -407.7Q1708.2 -407.7 1687.7 -395.5Q1667.2 -383.3 1656.2 -361.6Q1645.2 -339.8 1645.2 -310.5V0H1506.5V-319.3Q1506.5 -359.4 1482.6 -383.5Q1458.7 -407.7 1420.6 -407.7Q1395.2 -407.7 1374.4 -395.8Q1353.7 -383.8 1341.2 -360.6Q1328.8 -337.4 1328.8 -304.2V0ZM2186.1 8.6Q2134.6 8.6 2094.6 -8.4Q2054.6 -25.5 2031.6 -59.8Q2008.6 -94 2008.6 -145.3Q2008.6 -189.2 2024.7 -218.2Q2040.9 -247.2 2068.9 -264.9Q2096.8 -282.6 2133.3 -291.9Q2169.8 -301.1 2209.9 -304.9Q2257.2 -309.6 2285.1 -314Q2313 -318.3 2325.1 -326.7Q2337.2 -335 2337.2 -351.6V-354.9Q2337.2 -374 2327.1 -388.5Q2316.9 -403 2298.1 -411.2Q2279.4 -419.5 2253 -419.5Q2226.3 -419.5 2206.1 -411.1Q2185.9 -402.6 2174.2 -387.5Q2162.4 -372.4 2160.5 -352.4H2025.1Q2028.6 -405.8 2056.8 -444.8Q2084.9 -483.7 2135.7 -505.1Q2186.4 -526.4 2257.2 -526.4Q2310 -526.4 2351.4 -514.4Q2392.8 -502.3 2421.3 -479.3Q2449.9 -456.3 2464.6 -423.6Q2479.3 -390.9 2479.3 -349.7V0H2338.8V-72.7H2336.8Q2323.3 -47.6 2303.1 -29.3Q2283 -11 2254.3 -1.2Q2225.6 8.6 2186.1 8.6ZM2225.8 -91.2Q2260.5 -91.2 2285.8 -104Q2311.1 -116.7 2324.7 -138.7Q2338.2 -160.6 2338.2 -188.5V-240.3Q2332 -236.9 2321.7 -233.8Q2311.4 -230.7 2297.8 -227.8Q2284.1 -224.9 2268.1 -222.2Q2252 -219.4 2234.5 -216.8Q2210 -213.1 2190 -205Q2170 -197 2158.1 -183.5Q2146.3 -170 2146.3 -149.4Q2146.3 -131.2 2156.2 -118.1Q2166.1 -105 2183.9 -98.1Q2201.8 -91.2 2225.8 -91.2ZM2679.9 -286.6V0H2535.8V-515.6H2677.4V-434.1Q2696.5 -466.3 2722.8 -488.3Q2768.3 -526.4 2838.6 -526.4Q2893.7 -526.4 2934.3 -502.7Q2974.8 -479 2997 -433.6Q3019.2 -388.2 3019.2 -322.8V0H2875.7V-296.4Q2875.7 -348.6 2851 -375.5Q2826.4 -402.3 2781 -402.3Q2751.2 -402.3 2728.2 -390.1Q2705.3 -377.9 2692.6 -352.3Q2679.9 -326.7 2679.9 -286.6ZM3242.5 8.6Q3191 8.6 3151 -8.4Q3111 -25.5 3088 -59.8Q3065 -94 3065 -145.3Q3065 -189.2 3081.1 -218.2Q3097.2 -247.2 3125.2 -264.9Q3153.2 -282.6 3189.7 -291.9Q3226.2 -301.1 3266.3 -304.9Q3313.5 -309.6 3341.5 -314Q3369.4 -318.3 3381.5 -326.7Q3393.6 -335 3393.6 -351.6V-354.9Q3393.6 -374 3383.5 -388.5Q3373.3 -403 3354.5 -411.2Q3335.8 -419.5 3309.4 -419.5Q3282.7 -419.5 3262.5 -411.1Q3242.3 -402.6 3230.6 -387.5Q3218.8 -372.4 3216.9 -352.4H3081.5Q3085 -405.8 3113.2 -444.8Q3141.3 -483.7 3192.1 -505.1Q3242.8 -526.4 3313.6 -526.4Q3366.4 -526.4 3407.8 -514.4Q3449.2 -502.3 3477.7 -479.3Q3506.3 -456.3 3521 -423.6Q3535.7 -390.9 3535.7 -349.7V0H3395.2V-72.7H3393.2Q3379.7 -47.6 3359.5 -29.3Q3339.4 -11 3310.7 -1.2Q3282 8.6 3242.5 8.6ZM3282.2 -91.2Q3316.9 -91.2 3342.2 -104Q3367.5 -116.7 3381 -138.7Q3394.6 -160.6 3394.6 -188.5V-240.3Q3388.4 -236.9 3378.1 -233.8Q3367.8 -230.7 3354.2 -227.8Q3340.5 -224.9 3324.5 -222.2Q3308.4 -219.4 3290.9 -216.8Q3266.4 -213.1 3246.4 -205Q3226.4 -197 3214.5 -183.5Q3202.6 -170 3202.6 -149.4Q3202.6 -131.2 3212.6 -118.1Q3222.5 -105 3240.3 -98.1Q3258.2 -91.2 3282.2 -91.2Z",
+    reg: "M3404.8 -632.4A108.2 108.2 0 1 1 3621.3 -632.4A108.2 108.2 0 1 1 3404.8 -632.4ZM3428.8 -632.4A84.3 84.3 0 1 0 3597.3 -632.4A84.3 84.3 0 1 0 3428.8 -632.4ZM3470.7 -578.5V-686.3H3516Q3528.1 -686.3 3537 -681.9Q3545.9 -677.5 3550.8 -669.4Q3555.7 -661.3 3555.7 -650.1Q3555.7 -638.8 3550.7 -630.9Q3545.9 -623.2 3537.1 -619.2L3559.4 -578.5H3529.4L3510.1 -614.8H3498V-578.5ZM3498 -636.3H3509.8Q3515.4 -636.3 3519.3 -637.8Q3523.1 -639.2 3525.2 -642.2Q3527.2 -645.3 3527.2 -650.1Q3527.2 -655 3525.2 -658.1Q3523.1 -661.2 3519.3 -662.7Q3515.4 -664.2 3509.8 -664.2H3498Z",
+    regSmall: "M3419.1 -701.2A182.8 182.8 0 1 1 3784.6 -701.2A182.8 182.8 0 1 1 3419.1 -701.2ZM3467 -701.2A134.8 134.8 0 1 0 3736.7 -701.2A134.8 134.8 0 1 0 3467 -701.2ZM3531.9 -612.3V-790.1H3606.7Q3626.6 -790.1 3641.3 -782.9Q3656 -775.7 3664.1 -762.3Q3672.2 -748.9 3672.2 -730.4Q3672.2 -711.7 3664 -698.7Q3656 -686 3641.5 -679.3L3678.3 -612.3H3628.9L3597 -672.2H3577.1V-612.3ZM3577.1 -707.6H3596.5Q3605.7 -707.6 3612.1 -710Q3618.5 -712.4 3621.8 -717.4Q3625.2 -722.4 3625.2 -730.4Q3625.2 -738.4 3621.8 -743.6Q3618.5 -748.7 3612.1 -751.2Q3605.7 -753.7 3596.5 -753.7H3577.1Z",
+    vb: [11.8, -740.6, 3609.5, 752.3],
+    vbSmall: [11.8, -884, 3772.8, 895.7],
+    wordL: 11.8,
+    wordR: 3535.8,
+};
+
+function T({ small: e = !1, both: t = !1, cls: r = "" } = {}) {
+    const c = "http://www.w3.org/2000/svg";
+    const l = e && !t ? m.vbSmall : m.vb;
+    const n = document.createElementNS(c, "svg");
+
+    n.setAttribute("viewBox", l.join(" "));
+    n.setAttribute("aria-hidden", "true");
+    n.setAttribute("focusable", "false");
+    r && n.setAttribute("class", r);
+
+    const o = t
+        ? [[m.word], [m.reg, "wm-reg"], [m.regSmall, "wm-reg-s"]]
+        : [[m.word], [e ? m.regSmall : m.reg]];
+
+    for (const [Q, u] of o) {
+        const s = document.createElementNS(c, "path");
+        s.setAttribute("d", Q);
+        u && s.setAttribute("class", u);
+        n.appendChild(s);
+    }
+
+    return n;
+}
+
+function C() {
+    var n;
+    const e = [...document.querySelectorAll("body > .loader .loader-center > .loader-word")];
+    if (!e.length) return null;
+
+    const t = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const r = h.length - 1;
+    const c = ((n = document.timeline) == null ? void 0 : n.currentTime) ?? performance.now();
+    const l = {
+        at: c,
+        rm: t,
+        mark: null,
+        anims: e.slice(0, r).map((o, Q) => b(o, Q, r, c, t)),
+    };
+
+    return (window.__samanaHello = l), l;
+}
+
+function F(e) {
+    const t = document.querySelector("body > .loader > .loader-in");
+    if (!e || !t || t.querySelector(":scope > .curtain-mid")) return;
+
+    const r = document.createElement("div");
+    r.className = "curtain-mid";
+
+    const c = T({ both: !0, cls: "curtain-mark" });
+    r.appendChild(c);
+    t.appendChild(r);
+
+    e.mark = c;
+    e.anims.push(b(c, h.length - 1, h.length - 1, e.at, e.rm));
+}
+
+function q() {
+    const e = document.querySelector('link[rel="preload"][as="style"][data-css]');
+    return e
+        ? new Promise(t => {
+              const r = document.createElement("link");
+              r.rel = "stylesheet";
+              e.crossOrigin != null && (r.crossOrigin = e.crossOrigin);
+              r.onload = r.onerror = () => t();
+              r.href = e.href;
+              e.after(r);
+          })
+        : Promise.resolve();
+}
+
+function x() {
+    return document.visibilityState === "hidden"
+        ? Promise.resolve()
+        : new Promise(e => requestAnimationFrame(() => setTimeout(e, 0)));
+}
+
+var S;
+
+const D =
+    ((S = /[?&]boot=(shell|classic)(?:&|$)/.exec(location.search)) == null ? void 0 : S[1]) ||
+    void 0 ||
+    "shell";
+
+const v = q();
+const w = x();
+
+if (D === "shell") {
+    const e = w.then(C);
+    Promise.all([v, e]).then(([, t]) => (F(t), g(() => import("app-CRX_gFP4.js").then(r => r.a), [])));
+} else {
+    Promise.all([v, w]).then(() => g(() => import("app-CRX_gFP4.js").then(e => e.a), []));
+}
+
+export {
+    $ as C,
+    L as F,
+    h as H,
+    P as Q,
+    Z as R,
+    m as W,
+    g as _,
+    M as a,
+    b as f,
+    T as w,
+};
