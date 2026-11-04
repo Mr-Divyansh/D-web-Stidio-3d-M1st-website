@@ -1,0 +1,1 @@
+(function(){"use strict";self.postMessage({hello:typeof self.createImageBitmap=="function"}),self.onmessage=async t=>{const{id:s,blob:a,opts:o}=t.data;try{const e=await createImageBitmap(a,o);self.postMessage({id:s,bitmap:e},[e])}catch(e){self.postMessage({id:s,error:String((e==null?void 0:e.message)||e)})}}})();
