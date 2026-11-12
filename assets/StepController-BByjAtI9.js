@@ -34,7 +34,7 @@ const E = {
 };
 
 const C = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"]);
-const D = typeof location < "u" && /[?&]to=samana(?:&|$)/.test(location.search);
+const D = typeof location < "u" && /[?&]to=Divyansh(?:&|$)/.test(location.search);
 const N = "button, a[href], input, textarea, select, [role=button], [role=radio]";
 
 class R {
@@ -517,12 +517,12 @@ class R {
             this._lastY = this.lenis.animatedScroll;
             this._stillSince = t;
             this.toRest();
-            D && !this._toSamana && !((s = this.experience.router) != null && s.onPage) && (this._toSamana = { at: t + 800, to: this.stops.findIndex(n => n.kind === "s") });
+            D && !this._toDivyansh && !((s = this.experience.router) != null && s.onPage) && (this._toDivyansh = { at: t + 800, to: this.stops.findIndex(n => n.kind === "s") });
             return
         }
-        if ((i = this._toSamana) != null && i.at && t >= this._toSamana.at) {
-            const n = this._toSamana.to;
-            this._toSamana.at = 0;
+        if ((i = this._toDivyansh) != null && i.at && t >= this._toDivyansh.at) {
+            const n = this._toDivyansh.to;
+            this._toDivyansh.at = 0;
             this.state === "rest" && n > this.index && !this.scroll.paused && this.travelTo(n)
         }
         if (this.contactOpen || this.scroll.paused) {

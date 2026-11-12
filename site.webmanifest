@@ -1,4 +1,4 @@
-{ "name": "Samana Studio", "short_name": "Samana", "description": "Immersive web
+{ "name": "Divyansh Studio", "short_name": "Divyansh", "description": "Immersive web
 design for premium brands.", "lang": "en", "start_url": "/", "scope": "/",
 "display": "standalone", "background_color": "#02050c", "theme_color":
 "#02050c", "icons": [ { "src": "/icon-192.png", "sizes": "192x192", "type":

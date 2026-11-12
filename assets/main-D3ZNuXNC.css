@@ -16,7 +16,7 @@
 }
 
 @font-face {
-    font-family: SamanaHello;
+    font-family: DivyanshHello;
     src: url(../fonts/InterDisplay-Bold-hello.woff2) format("woff2");
     font-weight: 700;
     font-style: normal;
@@ -190,7 +190,7 @@ html {
 
 .loader-word {
     margin: 0;
-    font-family: SamanaHello, Inter, system-ui, sans-serif;
+    font-family: DivyanshHello, Inter, system-ui, sans-serif;
     font-weight: 700;
     font-size: var(--hello-fs);
     letter-spacing: -.03em;

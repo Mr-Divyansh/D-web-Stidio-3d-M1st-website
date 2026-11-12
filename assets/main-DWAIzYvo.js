@@ -67,7 +67,7 @@ const g = function (t, r, c) {
     });
 };
 
-const h = ["Hello", "你好", "नमस्ते", "Hola", "مرحبا", "Olá", "নমস্কার", "Привет", "こんにちは", "Bonjour", "Samana"];
+const h = ["Hello", "你好", "नमस्ते", "Hola", "مرحبا", "Olá", "নমস্কার", "Привет", "こんにちは", "Bonjour", "Divyansh"];
 
 const $ = /^[ -ɏЀ-ӿ]+$/;
 
@@ -153,7 +153,7 @@ function C() {
         anims: e.slice(0, r).map((o, Q) => b(o, Q, r, c, t)),
     };
 
-    return (window.__samanaHello = l), l;
+    return (window.__DivyanshHello = l), l;
 }
 
 function F(e) {

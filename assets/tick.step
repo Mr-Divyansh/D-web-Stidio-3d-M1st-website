@@ -9,7 +9,7 @@
     <!-- (release) the 404 — Apache's ErrorDocument serves it at any missing path: every URL here is absolute -->
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#02050c" />
-    <title>Page not found — Samana Studio</title>
+    <title>Page not found — Divyansh Studio</title>
     <link
       rel="icon"
       type="image/png"
@@ -29,7 +29,7 @@
     />
     <link
       rel="preload"
-      href="/fonts/InterSamana-Variable.woff2"
+      href="/fonts/InterDivyansh-Variable.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -37,7 +37,7 @@
     <style>
       @font-face {
         font-family: "Inter";
-        src: url("/fonts/InterSamana-Variable.woff2") format("woff2");
+        src: url("/fonts/InterDivyansh-Variable.woff2") format("woff2");
         font-weight: 400 700;
         font-style: normal;
         font-display: swap;
@@ -166,14 +166,14 @@
   </head>
   <body>
     <main>
-      <a class="mark" href="/" aria-label="Samana — home"
-        >Samana<sup aria-hidden="true">®</sup></a
+      <a class="mark" href="/" aria-label="Divyansh — home"
+        >Divyansh<sup aria-hidden="true">®</sup></a
       >
       <p class="code">404</p>
       <h1>This page isn’t here.</h1>
       <p class="es" lang="es">Esta página no existe.</p>
       <a class="home" href="/"
-        ><span aria-hidden="true">←</span> Back to Samana</a
+        ><span aria-hidden="true">←</span> Back to Divyansh</a
       >
     </main>
   </body>
